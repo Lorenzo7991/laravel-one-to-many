@@ -4,6 +4,17 @@
         @method('PUT')
     @endif
 
+   <div class="mb-3">
+    <label for="type_id" class="form-label">Type</label>
+    <select class="form-select" id="type_id" name="type_id">
+        <option value="">Select Type</option>
+        @foreach($types as $type)
+            <option value="{{ $type->id }}" {{ (isset ($project) && $project->type_id == $type->id) || old('type_id') == $type->id ? 'selected' : '' }}>{{ $type->label }}</option>
+        @endforeach
+    </select>
+</div>
+
+
     @error('title')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror
@@ -57,7 +68,7 @@
         </select>
     </div>
 
-    @error('thumb')
+ <!--    @error('thumb')
     <div class="alert alert-danger">{{ $message }}</div>
 @enderror
 
@@ -68,7 +79,7 @@
     @endif
     <input type="file" class="form-control" id="thumb" name="thumb">
 </div>
-
+ -->
     @error('documentation')
         <div class="alert alert-danger">{{ $message }}</div>
     @enderror

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Project;
+use App\Models\Type;
+
 use App\Http\Requests\ProjectRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -24,11 +26,12 @@ class ProjectController extends Controller
      */
     public function create()
     {
+        $types = Type::all();
         // Formatta la data corrente nel formato desiderato (GG/MM/AAAA)
         $formattedStartDate = Carbon::now()->format('d/m/Y');
         $formattedEndDate = Carbon::now()->addDays(30)->format('d/m/Y');
 
-        return view('admin.projects.create', compact('formattedStartDate', 'formattedEndDate'));
+        return view('admin.projects.create', compact('formattedStartDate', 'formattedEndDate', 'types'));
     }
 
     /**
@@ -65,7 +68,8 @@ class ProjectController extends Controller
     public function edit($id)
     {
         $project = Project::findOrFail($id);
-        return view('admin.projects.edit', compact('project'));
+        $types = Type::all();
+        return view('admin.projects.edit', compact('project', 'types'));
     }
 
     /**
@@ -76,19 +80,21 @@ class ProjectController extends Controller
         $project = Project::findOrFail($id);
         $validatedData = $request->validated();
 
-        // Caricamento del file thumb
-        if ($request->hasFile('thumb')) {
-            // Elimina il vecchio file thumb
-            Storage::disk('public')->delete($project->thumb);
+        // Verifica se è stata selezionata una tipologia
+        if (isset ($validatedData['type_id'])) {
+            // Recupera la tipologia associata al progetto
+            $type = Type::findOrFail($validatedData['type_id']);
 
-            // Carica il nuovo file thumb
-            $validatedData['thumb'] = $request->file('thumb')->store('thumbnails', 'public');
+            // Assegna la tipologia al progetto
+            $project->type()->associate($type);
         }
 
+        // Aggiorna il progetto con i dati validati
         $project->update($validatedData);
 
         return redirect()->route('admin.projects.index')->with('success', 'Project updated successfully.');
     }
+
 
     /**
      * Remove the specified resource from storage.

@@ -24,6 +24,7 @@
                                     <th>End Date</th>
                                     <th>Technologies</th>
                                     <th>Status</th>
+                                    <th>Type</th> <!-- Nuova colonna per il tipo -->
                                     <th>Preview</th>
                                     <th>Documentation</th>
                                     <th>Actions</th>
@@ -37,8 +38,15 @@
                                     <td>{{ $project->description }}</td>
                                     <td>{{ \Illuminate\Support\Carbon::parse($project->start_date)->format('d/m/Y') }}</td>
                                     <td>{{ \Illuminate\Support\Carbon::parse($project->end_date)->format('d/m/Y') }}</td>
-                                    <td>{{ $project->technologies_used }}</td> <!-- Correzione qui -->
+                                    <td>{{ $project->technologies_used }}</td>
                                     <td>{{ $project->status }}</td>
+                                    <td>
+                                        @if ($project->type)
+                                            {{ $project->type->label }}
+                                        @else
+                                            No type assigned
+                                        @endif
+                                    </td>
                                     <td>
                                         <img src="{{ $project->thumb }}" alt="Preview" class="img-thumbnail" style="max-width: 100px;">
                                     </td>

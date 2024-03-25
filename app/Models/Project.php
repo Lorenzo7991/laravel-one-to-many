@@ -23,4 +23,9 @@ class Project extends Model
     protected $casts = [
         'slug' => 'string', //  n.b. conversione esplicita dello slug come stringa
     ];
+
+    public function type()
+    {
+        return $this->belongsTo(Type::class);
+    }
 }
